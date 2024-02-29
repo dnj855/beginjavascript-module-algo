@@ -13,10 +13,10 @@ function readFileContent(file) {
 
 const findLargestSum = (file) => {
   // 🦁 Utilise readFileContent pour lire le fichier et stocke-le dans une variable fileContent
-  // 🦁 Trouve les lutins en utilisant `.split("\n\n")` dans notre liste
+  // 🦁 Trouve les lutins en utilisant `.split("\n\n")`pour mac ou `.split("\r\n\r\n")` pour windows dans notre liste
   // 🦁 Initialise une variable largestSum à 0
   // 🦁 Pour chaque lutin (boucle for)
-  // 🦁   Trouve les calories en utilisant `.split("\n")` dans notre liste
+  // 🦁   Trouve les calories en utilisant `.split("\n")`pour mac ou `.split("\r\n")` pour windows dans notre liste
   // 🦁   Initialise une variable sum à 0
   // 🦁   Pour chaque calorie (boucle for)
   // 🦁     Ajoute la calorie à la variable sum
@@ -37,8 +37,14 @@ export const part2 = (file) => {
   return 0;
 };
 
-// Should be 24000
+//Should be 24000 with data-test
+console.log('Test part1', part1('./data-test.txt'));
+
+//Should be 74394 with data
 console.log('Test part1', part1('./data.txt'));
 
-// Should be 212117
-console.log('Test part1', part2('./data.txt'));
+//Should be 45000 with data-test
+console.log('Test part2', part2('./data-test.txt'));
+
+//Should be 212836 with data
+console.log('Test part2', part2('./data.txt'));
