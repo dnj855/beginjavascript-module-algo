@@ -1,3 +1,4 @@
+import { log } from 'console';
 import fs from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
@@ -12,19 +13,20 @@ function readFileContent(file) {
 }
 
 const findLargestSum = (file) => {
-  // 🦁 Utilise readFileContent pour lire le fichier et stocke-le dans une variable fileContent
-  // 🦁 Trouve les lutins en utilisant `.split("\n\n")`pour mac ou `.split("\r\n\r\n")` pour windows dans notre liste
-  // 🦁 Initialise une variable largestSum à 0
-  // 🦁 Pour chaque lutin (boucle for)
-  // 🦁   Trouve les calories en utilisant `.split("\n")`pour mac ou `.split("\r\n")` pour windows dans notre liste
-  // 🦁   Initialise une variable sum à 0
-  // 🦁   Pour chaque calorie (boucle for)
-  // 🦁     Ajoute la calorie à la variable sum
-  // 🦁   Si la variable sum est plus grande que la variable largestSum
-  // 🦁     Mets la variable sum dans la variable largestSum
-  // 🦁 Retourne la variable largestSum
-
-  return 0;
+  const fileContent = readFileContent(file);
+  const elves = fileContent.split('\n\n');
+  let largestSum = 0;
+  for (let i = 0; i < elves.length; i++) {
+    const calories = elves[i].split('\n');
+    let sum = 0;
+    for (let j = 0; j < calories.length; j++) {
+      sum += Number(calories[j]);
+    }
+    if (sum > largestSum) {
+      largestSum = sum;
+    }
+  }
+  return largestSum;
 };
 
 export const part1 = (file) => {
