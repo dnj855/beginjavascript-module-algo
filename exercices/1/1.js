@@ -29,14 +29,30 @@ const findLargestSum = (file) => {
   return largestSum;
 };
 
+const findSumOfThreeLargest = (file) => {
+  const sums = [];
+  const fileContent = readFileContent(file);
+  const elves = fileContent.split('\n\n');
+  for (let i = 0; i < elves.length; i++) {
+    const calories = elves[i].split('\n');
+    let sum = 0;
+    for (let j = 0; j < calories.length; j++) {
+      sum += Number(calories[j]);
+    }
+    sums.push(sum);
+  }
+  const sorted = sums.sort((a, b) => a - b);
+  const lastIndex = sorted.length - 1;
+  return sorted[lastIndex] + sorted[lastIndex - 1] + sorted[lastIndex - 2];
+};
+
 export const part1 = (file) => {
   return findLargestSum(file);
 };
 
 // À faire après
 export const part2 = (file) => {
-  // 🦁 Pour la partie 2, utilise la fonction ici
-  return 0;
+  return findSumOfThreeLargest(file);
 };
 
 //Should be 24000 with data-test
