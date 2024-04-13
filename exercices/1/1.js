@@ -30,17 +30,14 @@ const findLargestSum = (file) => {
 };
 
 const findSumOfThreeLargest = (file) => {
-  const sums = [];
   const fileContent = readFileContent(file);
   const elves = fileContent.split('\n\n');
-  for (let i = 0; i < elves.length; i++) {
-    const calories = elves[i].split('\n');
-    let sum = 0;
-    for (let j = 0; j < calories.length; j++) {
-      sum += Number(calories[j]);
-    }
-    sums.push(sum);
-  }
+
+  const sums = elves.map((elf) => {
+    const calories = elf.split('\n');
+    return calories.reduce((sum, calorie) => sum + Number(calorie), 0);
+  });
+
   const sorted = sums.sort((a, b) => a - b);
   const lastIndex = sorted.length - 1;
   return sorted[lastIndex] + sorted[lastIndex - 1] + sorted[lastIndex - 2];
