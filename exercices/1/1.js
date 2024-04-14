@@ -15,17 +15,13 @@ function readFileContent(file) {
 const findLargestSum = (file) => {
   const fileContent = readFileContent(file);
   const elves = fileContent.split('\n\n');
-  let largestSum = 0;
-  for (let i = 0; i < elves.length; i++) {
-    const calories = elves[i].split('\n');
-    let sum = 0;
-    for (let j = 0; j < calories.length; j++) {
-      sum += Number(calories[j]);
-    }
-    if (sum > largestSum) {
-      largestSum = sum;
-    }
-  }
+  let largestSum = elves.reduce((acc, elve) => {
+    const calories = elve.split('\n');
+    let sum = calories.reduce((acc2, calorie) => {
+      return acc2 + Number(calorie);
+    }, 0);
+    return sum > acc ? sum : acc;
+  }, 0);
   return largestSum;
 };
 
@@ -33,14 +29,13 @@ const findSumOfThreeLargest = (file) => {
   const fileContent = readFileContent(file);
   const elves = fileContent.split('\n\n');
 
-  const sums = elves.map((elf) => {
-    const calories = elf.split('\n');
-    return calories.reduce((sum, calorie) => sum + Number(calorie), 0);
-  });
-
-  const sorted = sums.sort((a, b) => a - b);
-  const lastIndex = sorted.length - 1;
-  return sorted[lastIndex] + sorted[lastIndex - 1] + sorted[lastIndex - 2];
+  const sorted = elves
+    .map((elve) => {
+      const calories = elve.split('\n');
+      return calories.reduce((sum, calorie) => sum + Number(calorie), 0);
+    })
+    .sort((a, b) => b - a);
+  return sorted[0] + sorted[1] + sorted[2];
 };
 
 export const part1 = (file) => {
