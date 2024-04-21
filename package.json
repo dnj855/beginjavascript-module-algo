@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon script.js",
     "start": "node script.js",
+    "start2": "node exercices/2/2.js",
     "beginjavascript": "echo 'hello beginjavascript, je suis un script bash !'",
     "test": "vitest"
   },
