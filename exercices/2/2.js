@@ -92,6 +92,14 @@ class Piece {
     this.state = state;
   }
 
+  get isDirty() {
+    return this.state === 'dirty';
+  }
+
+  get isClean() {
+    return !this.isDirty;
+  }
+
   /**
    * Returns an emoji representation of the piece's state.
    * '🧼' represents a clean state, '🧽' represents a state cleaned by the robot, and '💩' represents any other state.
@@ -130,6 +138,11 @@ class House {
     this.layout = layout;
     this.robot = robot;
   }
+
+  isAllClean() {
+    return !this.layout.some((row) => row.some((piece) => piece.isDirty));
+  }
+
   /**
    * Logs the layout of the house.
    * The layout is represented as a string, where each piece is represented by an emoji.
@@ -192,22 +205,6 @@ const play = async () => {
   const house = new House(createLayout(houseSize[0], houseSize[1]), robot);
   robot.logBattery();
   house.logLayout();
-  let direction = 1;
-  for (let i = 0; i < houseSize[0]; i++) {
-    for (let j = 0; j < houseSize[1]; j++) {
-      console.clear();
-
-      robot.logBattery();
-      house.logLayout();
-      robot.move(direction, 0);
-      robot.clean(house);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    }
-    robot.move(0, 1);
-    direction = direction === 1 ? -1 : 1;
-    robot.clean(house);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-  }
 };
 
 // Starts the game.
