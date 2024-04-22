@@ -53,7 +53,7 @@ class Robot {
   move(x, y) {
     if (this.checkBattery()) return;
 
-    if (x > Math.abs(1) || y > Math.abs(1)) {
+    if (Math.abs(x) > 1 || Math.abs(y) > 1) {
       console.log("Le robot ne peut pas se déplacer de plus d'une case à la fois.");
       return;
     }
@@ -76,6 +76,35 @@ class Robot {
       `Nettoyage de la position ${this.position}. Etat de la batterie : ${this.battery}%.`
     );
     house.clean(this.position);
+  }
+  /**
+   *
+   * @param {House} house
+   */
+  doWork(house) {
+    const nearestDirtyPiece = house.nearestDirtyPiece();
+    if (!nearestDirtyPiece) {
+      console.log('La maison est propre.');
+      return false;
+    }
+    const robotPosition = this.position;
+
+    const deltaX = nearestDirtyPiece[0] - robotPosition[0];
+    const deltaY = nearestDirtyPiece[1] - robotPosition[1];
+    if (deltaX === 0 && deltaY === 0) {
+      this.clean(house);
+      return;
+    }
+    if (deltaX > 0) {
+      this.move(1, 0);
+    } else if (deltaX < 0) {
+      this.move(-1, 0);
+    } else if (deltaY > 0) {
+      this.move(0, 1);
+    } else if (deltaY < 0) {
+      this.move(0, -1);
+    }
+    return true;
   }
 }
 
@@ -173,6 +202,28 @@ class House {
     const [x, y] = position;
     this.layout[x]?.[y]?.clean();
   }
+
+  nearestDirtyPiece() {
+    const position = this.robot.position;
+    if (this.layout[position[0]][position[1]].isDirty) {
+      return position;
+    }
+    let nearestDirtyPiece = null;
+    let nearestDistance = null;
+    for (let i = 0; i < this.layout.length; i++) {
+      for (let j = 0; j < this.layout[i].length; j++) {
+        if (this.layout[i][j].isClean) continue;
+        if (this.layout[i][j].isDirty) {
+          const distance = Math.abs(position[0] - i) + Math.abs(position[1] - j);
+          if (nearestDistance === null || distance < nearestDistance) {
+            nearestDirtyPiece = [i, j];
+            nearestDistance = distance;
+          }
+        }
+      }
+    }
+    return nearestDirtyPiece;
+  }
 }
 
 /**
@@ -200,11 +251,22 @@ const createLayout = (x, y) => {
  * A robot is created, a house is created with a layout of 5x5, and then the robot's battery and the house's layout are logged.
  */
 const play = async () => {
-  const houseSize = [5, 5];
+  const houseSize = [10, 10];
   const robot = new Robot();
   const house = new House(createLayout(houseSize[0], houseSize[1]), robot);
-  robot.logBattery();
-  house.logLayout();
+  let time = 0;
+  const workInterval = setInterval(() => {
+    console.clear();
+    robot.logBattery();
+    house.logLayout();
+    time++;
+    if (!house.isAllClean()) {
+      robot.doWork(house);
+      return;
+    }
+    clearInterval(workInterval);
+    console.log(`Le robot a terminé le nettoyage en ${time} fois.`);
+  }, 100);
 };
 
 // Starts the game.
