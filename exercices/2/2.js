@@ -26,7 +26,53 @@ class Robot {
     }
     console.log(battery);
   }
+
+  checkBattery() {
+    if (this.battery > 0) {
+      return false;
+    }
+    console.log('Batterie épuisée. Retour à la station de recharge.');
+    this.position = [0, 0];
+    this.battery = 100;
+    console.log('Batterie chargée. Prêt à reprendre le nettoyage.');
+    return true;
+  }
+
+  /**
+   *
+   * @param {Number} x
+   * @param {Number} y
+   * @returns
+   */
+  move(x, y) {
+    if (this.checkBattery()) return;
+
+    if (x > Math.abs(1) || y > Math.abs(1)) {
+      console.log("Le robot ne peut pas se déplacer de plus d'une case à la fois.");
+      return;
+    }
+    this.battery--;
+    this.position = [this.position[0] + x, this.position[1] + y];
+    console.log(
+      `Le robot se déplace à la position ${this.position}. Etat de la batterie : ${this.battery}%.`
+    );
+  }
+
+  /**
+   *
+   * @param {House} house
+   * @returns
+   */
+  clean(house) {
+    if (this.checkBattery()) return;
+    this.battery -= 5;
+    console.log(
+      `Nettoyage de la position ${this.position}. Etat de la batterie : ${this.battery}%.`
+    );
+    house.clean(this.position);
+  }
 }
+
 /**
  * Represents a piece of the house.
  * @constructor
@@ -53,6 +99,11 @@ class Piece {
     } else {
       return '💩';
     }
+  }
+
+  clean() {
+    if (this.state !== 'dirty') return;
+    this.state = 'clean_by_robot';
   }
 }
 
@@ -90,6 +141,11 @@ class House {
       .join('\n');
     console.log(layoutString);
   }
+
+  clean(position) {
+    const [x, y] = position;
+    this.layout[x]?.[y]?.clean();
+  }
 }
 
 /**
@@ -116,11 +172,28 @@ const createLayout = (x, y) => {
  * Plays the game.
  * A robot is created, a house is created with a layout of 5x5, and then the robot's battery and the house's layout are logged.
  */
-const play = () => {
+const play = async () => {
+  const houseSize = [5, 5];
   const robot = new Robot();
-  const house = new House(createLayout(5, 5), robot);
+  const house = new House(createLayout(houseSize[0], houseSize[1]), robot);
   robot.logBattery();
   house.logLayout();
+  let direction = 1;
+  for (let i = 0; i < houseSize[0]; i++) {
+    for (let j = 0; j < houseSize[1]; j++) {
+      console.clear();
+
+      robot.logBattery();
+      house.logLayout();
+      robot.move(direction, 0);
+      robot.clean(house);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+    robot.move(0, 1);
+    direction = direction === 1 ? -1 : 1;
+    robot.clean(house);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
 };
 
 // Starts the game.
