@@ -19,8 +19,9 @@ class Robot {
 }
 
 class Piece {
-  constructor(state) {
+  constructor(state, position) {
     this.state = state;
+    this.position = position;
   }
   getEmoji() {
     if (this.state === 'clean') {
@@ -43,7 +44,11 @@ class House {
       .map((row) => {
         return row
           .map((piece) => {
-            if (piece === this.robot.position) {
+            if (
+              piece.position.every(
+                (value, index) => value === this.robot.position[index]
+              )
+            ) {
               return '🤖';
             } else {
               return piece.getEmoji();
@@ -61,7 +66,7 @@ const createLayout = (x, y) => {
   for (let i = 0; i < x; i++) {
     const row = [];
     for (let j = 0; j < y; j++) {
-      const piece = new Piece(Math.random() < 0.5 ? 'clean' : 'dirty');
+      const piece = new Piece(Math.random() < 0.5 ? 'clean' : 'dirty', [i, j]);
       row.push(piece);
     }
     layout.push(row);
@@ -71,7 +76,7 @@ const createLayout = (x, y) => {
 
 const play = () => {
   const robot = new Robot();
-  const house = new House(createLayout(10, 10), robot);
+  const house = new House(createLayout(5, 5), robot);
   console.log(robot.logBattery());
   console.log(house.logLayout());
 };
