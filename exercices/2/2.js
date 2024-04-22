@@ -27,6 +27,11 @@ class Robot {
     console.log(battery);
   }
 
+  /**
+   * Checks the battery level of the robot.
+   * If the battery level is 0, the robot returns to the charging station at position [0, 0] and recharges its battery to 100.
+   * @returns {boolean} Returns true if the battery was empty and the robot had to recharge, false otherwise.
+   */
   checkBattery() {
     if (this.battery > 0) {
       return false;
@@ -39,10 +44,11 @@ class Robot {
   }
 
   /**
-   *
-   * @param {Number} x
-   * @param {Number} y
-   * @returns
+   * Moves the robot to a new position.
+   * The robot can only move one step at a time, either horizontally or vertically.
+   * Moving consumes 1% of the robot's battery.
+   * @param {Number} x - The vertical displacement.
+   * @param {Number} y - The horizontal displacement.
    */
   move(x, y) {
     if (this.checkBattery()) return;
@@ -59,9 +65,9 @@ class Robot {
   }
 
   /**
-   *
-   * @param {House} house
-   * @returns
+   * Cleans the current position of the robot.
+   * Cleaning consumes 5% of the robot's battery.
+   * @param {House} house - The house in which the robot is.
    */
   clean(house) {
     if (this.checkBattery()) return;
@@ -101,6 +107,10 @@ class Piece {
     }
   }
 
+  /**
+   * Cleans the piece.
+   * The state of the piece is changed to 'clean_by_robot' if it was 'dirty'.
+   */
   clean() {
     if (this.state !== 'dirty') return;
     this.state = 'clean_by_robot';
@@ -142,6 +152,10 @@ class House {
     console.log(layoutString);
   }
 
+  /**
+   * Cleans the piece at the given position.
+   * @param {Array} position - The position of the piece to clean. The first element is the row index and the second element is the column index.
+   */
   clean(position) {
     const [x, y] = position;
     this.layout[x]?.[y]?.clean();
